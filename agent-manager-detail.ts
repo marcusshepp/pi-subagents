@@ -187,6 +187,6 @@ export function renderTaskInput(
 	lines.push(row("", width, theme));
 	const enterLabel = skipClarify ? "quick run" : "run";
 	const quickLabel = skipClarify ? "on" : "off";
-	lines.push(renderFooter(` [alt+enter] ${enterLabel}  [tab] quick: ${quickLabel}  [esc] cancel `, width, theme));
+	lines.push(renderFooter(` [ctrl+s] ${enterLabel}  [tab] quick: ${quickLabel}  [esc] cancel `, width, theme));
 	return lines;
 }

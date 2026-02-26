@@ -278,7 +278,7 @@ export class AgentManagerComponent implements Component {
 			case "task-input": {
 				if (matchesKey(data, "tab")) { this.skipClarify = !this.skipClarify; this.tui.requestRender(); return; }
 				if (matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) { this.screen = this.taskBackScreen; this.tui.requestRender(); return; }
-				if (matchesKey(data, "alt+return")) {
+				if (matchesKey(data, "ctrl+s")) {
 					if (this.chainLaunchId) {
 						const chainEntry = this.getChainEntry(this.chainLaunchId); if (!chainEntry) { this.screen = "list"; this.tui.requestRender(); return; }
 						this.done({ action: "launch-chain", chain: cloneChainConfig(chainEntry.config), task: this.taskEditor.buffer, skipClarify: this.skipClarify }); return;
