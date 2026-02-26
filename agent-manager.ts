@@ -278,7 +278,7 @@ export class AgentManagerComponent implements Component {
 			case "task-input": {
 				if (matchesKey(data, "tab")) { this.skipClarify = !this.skipClarify; this.tui.requestRender(); return; }
 				if (matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) { this.screen = this.taskBackScreen; this.tui.requestRender(); return; }
-				if (matchesKey(data, "ctrl+s")) {
+				if (matchesKey(data, "return")) {
 					if (this.chainLaunchId) {
 						const chainEntry = this.getChainEntry(this.chainLaunchId); if (!chainEntry) { this.screen = "list"; this.tui.requestRender(); return; }
 						this.done({ action: "launch-chain", chain: cloneChainConfig(chainEntry.config), task: this.taskEditor.buffer, skipClarify: this.skipClarify }); return;
@@ -298,6 +298,8 @@ export class AgentManagerComponent implements Component {
 					const dir = matchesKey(data, "shift+up") || matchesKey(data, "pageup") ? -1 : 1; const targetLine = Math.max(0, Math.min(wrapped.length - 1, cursorPos.line + dir * TASK_INPUT_VIEWPORT));
 					const targetCol = Math.min(cursorPos.col, wrapped[targetLine]?.length ?? 0); this.taskEditor = { ...this.taskEditor, cursor: starts[targetLine] + targetCol }; this.tui.requestRender(); return;
 				}
+				if (matchesKey(data, "ctrl+return")) { const c = this.taskEditor.cursor; this.taskEditor = { ...this.taskEditor, buffer: this.taskEditor.buffer.slice(0, c) + "
+" + this.taskEditor.buffer.slice(c), cursor: c + 1 }; this.tui.requestRender(); return; }
 				const nextState = handleEditorInput(this.taskEditor, data, boxInnerWidth, { multiLine: true });
 				if (nextState) { this.taskEditor = nextState; this.tui.requestRender(); return; }
 				return;
