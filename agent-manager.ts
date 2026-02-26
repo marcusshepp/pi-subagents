@@ -292,7 +292,7 @@ export class AgentManagerComponent implements Component {
 					this.done({ action: "launch", agent: name, task: this.taskEditor.buffer, skipClarify: this.skipClarify }); return;
 				}
 				const innerW = this.overlayWidth - 2; const boxInnerWidth = Math.max(10, innerW - 4);
-				const TASK_INPUT_VIEWPORT = 10;
+				const TASK_INPUT_VIEWPORT = 30;
 				if (matchesKey(data, "shift+up") || matchesKey(data, "pageup") || matchesKey(data, "shift+down") || matchesKey(data, "pagedown")) {
 					const { lines: wrapped, starts } = wrapText(this.taskEditor.buffer, boxInnerWidth); const cursorPos = getCursorDisplayPos(this.taskEditor.cursor, starts);
 					const dir = matchesKey(data, "shift+up") || matchesKey(data, "pageup") ? -1 : 1; const targetLine = Math.max(0, Math.min(wrapped.length - 1, cursorPos.line + dir * TASK_INPUT_VIEWPORT));

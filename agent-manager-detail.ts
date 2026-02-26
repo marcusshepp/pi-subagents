@@ -177,8 +177,8 @@ export function renderTaskInput(
 	const editorState = { ...editor };
 	const { starts } = wrapText(editorState.buffer, boxInnerWidth);
 	const cursorPos = getCursorDisplayPos(editorState.cursor, starts);
-	editorState.viewportOffset = ensureCursorVisible(cursorPos.line, 10, editorState.viewportOffset);
-	const editorLines = renderEditor(editorState, boxInnerWidth, 10);
+	editorState.viewportOffset = ensureCursorVisible(cursorPos.line, 30, editorState.viewportOffset);
+	const editorLines = renderEditor(editorState, boxInnerWidth, 30);
 	for (const line of editorLines) {
 		lines.push(row(` │${pad(line, boxInnerWidth)}│`, width, theme));
 	}
