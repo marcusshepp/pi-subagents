@@ -177,8 +177,8 @@ export function renderTaskInput(
 	const editorState = { ...editor };
 	const { starts } = wrapText(editorState.buffer, boxInnerWidth);
 	const cursorPos = getCursorDisplayPos(editorState.cursor, starts);
-	editorState.viewportOffset = ensureCursorVisible(cursorPos.line, 2, editorState.viewportOffset);
-	const editorLines = renderEditor(editorState, boxInnerWidth, 2);
+	editorState.viewportOffset = ensureCursorVisible(cursorPos.line, 10, editorState.viewportOffset);
+	const editorLines = renderEditor(editorState, boxInnerWidth, 10);
 	for (const line of editorLines) {
 		lines.push(row(` │${pad(line, boxInnerWidth)}│`, width, theme));
 	}
@@ -187,6 +187,6 @@ export function renderTaskInput(
 	lines.push(row("", width, theme));
 	const enterLabel = skipClarify ? "quick run" : "run";
 	const quickLabel = skipClarify ? "on" : "off";
-	lines.push(renderFooter(` [enter] ${enterLabel}  [tab] quick: ${quickLabel}  [esc] cancel `, width, theme));
+	lines.push(renderFooter(` [ctrl+s] ${enterLabel}  [tab] quick: ${quickLabel}  [esc] cancel `, width, theme));
 	return lines;
 }

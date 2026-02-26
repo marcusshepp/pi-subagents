@@ -277,10 +277,8 @@ export class AgentManagerComponent implements Component {
 			}
 			case "task-input": {
 				if (matchesKey(data, "tab")) { this.skipClarify = !this.skipClarify; this.tui.requestRender(); return; }
-				const innerW = this.overlayWidth - 2; const boxInnerWidth = Math.max(10, innerW - 4); const nextState = handleEditorInput(this.taskEditor, data, boxInnerWidth);
-				if (nextState) { this.taskEditor = nextState; this.tui.requestRender(); return; }
 				if (matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) { this.screen = this.taskBackScreen; this.tui.requestRender(); return; }
-				if (matchesKey(data, "return")) {
+				if (matchesKey(data, "ctrl+s")) {
 					if (this.chainLaunchId) {
 						const chainEntry = this.getChainEntry(this.chainLaunchId); if (!chainEntry) { this.screen = "list"; this.tui.requestRender(); return; }
 						this.done({ action: "launch-chain", chain: cloneChainConfig(chainEntry.config), task: this.taskEditor.buffer, skipClarify: this.skipClarify }); return;
@@ -293,6 +291,15 @@ export class AgentManagerComponent implements Component {
 					if (!name) { this.screen = "list"; this.tui.requestRender(); return; }
 					this.done({ action: "launch", agent: name, task: this.taskEditor.buffer, skipClarify: this.skipClarify }); return;
 				}
+				const innerW = this.overlayWidth - 2; const boxInnerWidth = Math.max(10, innerW - 4);
+				const TASK_INPUT_VIEWPORT = 10;
+				if (matchesKey(data, "shift+up") || matchesKey(data, "pageup") || matchesKey(data, "shift+down") || matchesKey(data, "pagedown")) {
+					const { lines: wrapped, starts } = wrapText(this.taskEditor.buffer, boxInnerWidth); const cursorPos = getCursorDisplayPos(this.taskEditor.cursor, starts);
+					const dir = matchesKey(data, "shift+up") || matchesKey(data, "pageup") ? -1 : 1; const targetLine = Math.max(0, Math.min(wrapped.length - 1, cursorPos.line + dir * TASK_INPUT_VIEWPORT));
+					const targetCol = Math.min(cursorPos.col, wrapped[targetLine]?.length ?? 0); this.taskEditor = { ...this.taskEditor, cursor: starts[targetLine] + targetCol }; this.tui.requestRender(); return;
+				}
+				const nextState = handleEditorInput(this.taskEditor, data, boxInnerWidth, { multiLine: true });
+				if (nextState) { this.taskEditor = nextState; this.tui.requestRender(); return; }
 				return;
 			}
 			case "confirm-delete": {
@@ -340,6 +347,13 @@ export class AgentManagerComponent implements Component {
 	private handleListAction(action: ListAction): void {
 		switch (action.type) {
 			case "open-detail": { const agent = this.getAgentEntry(action.id); if (agent) { this.enterDetail(agent); return; } const chain = this.getChainEntry(action.id); if (chain) this.enterChainDetail(chain); return; }
+			case "quick-launch": {
+				const agent = this.getAgentEntry(action.id);
+				if (agent) { this.enterTaskInput([agent.id]); return; }
+				const chain = this.getChainEntry(action.id);
+				if (chain) { this.enterSavedChainLaunch(chain); return; }
+				return;
+			}
 			case "clone": if (this.getAgentEntry(action.id)) this.enterNameInput("clone-agent", action.id); else if (this.getChainEntry(action.id)) this.enterNameInput("clone-chain", action.id); return;
 			case "new": this.enterTemplateSelect(); return;
 			case "delete": { if (this.isBuiltin(action.id)) { this.statusMessage = { text: "Builtin agents cannot be deleted. Clone to user scope to override.", type: "error" }; return; } this.confirmDeleteId = action.id; this.screen = "confirm-delete"; return; }

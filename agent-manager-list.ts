@@ -22,6 +22,7 @@ export interface ListState {
 
 export type ListAction =
 	| { type: "open-detail"; id: string }
+	| { type: "quick-launch"; id: string }
 	| { type: "clone"; id: string }
 	| { type: "new" }
 	| { type: "delete"; id: string }
@@ -75,7 +76,7 @@ export function handleListInput(state: ListState, agents: ListAgent[], data: str
 	if (matchesKey(data, "return")) {
 		if (filtered.length > 0) {
 			const agent = filtered[state.cursor];
-			if (agent) return { type: "open-detail", id: agent.id };
+			if (agent) return { type: "quick-launch", id: agent.id };
 		}
 		return;
 	}
@@ -139,6 +140,14 @@ export function handleListInput(state: ListState, agents: ListAgent[], data: str
 		if (state.selected.length > 0) return { type: "run-parallel", ids: [...state.selected] };
 		const agent = filtered[state.cursor];
 		if (agent && agent.kind === "agent") return { type: "run-parallel", ids: [agent.id] };
+		return;
+	}
+
+	if (data === "d") {
+		if (filtered.length > 0) {
+			const agent = filtered[state.cursor];
+			if (agent) return { type: "open-detail", id: agent.id };
+		}
 		return;
 	}
 
@@ -259,7 +268,7 @@ export function renderList(
 		? ` [ctrl+r] chain  [ctrl+p] parallel  [tab] add  [shift+tab] remove  [esc] clear (${selCount}) `
 		: selCount === 1
 			? " [ctrl+r] run  [ctrl+p] parallel  [tab] add more  [shift+tab] remove  [esc] clear "
-			: " [enter] view  [ctrl+r] run  [tab] select  [alt+n] new  [esc] close ";
+			: " [enter] run  [d] detail  [tab] select  [alt+n] new  [esc] close ";
 	lines.push(renderFooter(footerText, width, theme));
 
 	return lines;
