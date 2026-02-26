@@ -1370,7 +1370,7 @@ MANAGEMENT (use action field — omit agent/task/chain/tasks):
 		resultFileCoalescer.clear();
 		if (ctx.hasUI) {
 			// Disable the built-in welcome/splash header
-			ctx.setHeader((_tui, _theme) => ({ render: () => [], invalidate() {}, dispose() {} }));
+			ctx.ui.setHeader((_tui, _theme) => ({ render: () => [], invalidate() {}, dispose() {} }));
 			lastUiContext = ctx;
 			renderWidget(ctx, []);
 		}
