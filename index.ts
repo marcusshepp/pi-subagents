@@ -92,6 +92,9 @@ function ensureAccessibleDir(dirPath: string): void {
 export default function registerSubagentExtension(pi: ExtensionAPI): void {
 	ensureAccessibleDir(RESULTS_DIR);
 	ensureAccessibleDir(ASYNC_DIR);
+	// Disable the built-in welcome/splash header
+	pi.setHeader((_tui, _theme) => ({ render: () => [], invalidate() {}, dispose() {} }));
+
 
 	// Cleanup old chain directories on startup (after 24h)
 	cleanupOldChainDirs();
